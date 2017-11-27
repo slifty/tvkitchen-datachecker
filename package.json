@@ -1,17 +1,17 @@
 {
-  "name": "node-template",
+  "name": "tvkitchen-datachecker",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:slifty/node-template.git",
+  "repository": "git@github.com:slifty/tvkitchen-datachecker.git",
   "author": "Dan Schultz <slifty@gmail.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "start": "yarn dev:start",
     "dev:start": "nodemon --ignore lib --exec babel-node src/server",
     "prod:build": "rimraf lib && babel src -d lib --ignore .test.js",
     "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
     "prod:stop": "pm2 delete server",
-    "test": "eslint src && jest --coverage",
+    "test": "eslint src",
     "precommit": "yarn test",
     "prepush": "yarn test && yarn prod:build"
   },
