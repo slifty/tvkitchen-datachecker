@@ -8,11 +8,7 @@
     "logging": false
   },
   "production": {
-    "username": "tvkitchen_datachecker",
-    "password": "tvkitchen",
-    "database": "tvkitchen_datachecker",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
+    "use_env_variable": "DATABASE_URL",
     "logging": false
   }
 }
