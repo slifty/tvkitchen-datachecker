@@ -1,0 +1,144 @@
+<html>
+  <head>
+    <title>Data Checker</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+      .images img {
+        width:100%;
+      }
+      label {
+        font-size: 16px;
+
+      }
+    </style>
+
+    <script type="text/javascript">
+      var activeMeasurements = {};
+
+      function generateMeasurementDomObject(measurement) {
+        var measurementObject = $('<div>')
+          .addClass('measurement')
+          .addClass('row')
+          .data('id', measurement.id);
+
+        var label = $("<div>")
+          .addClass('label')
+          .addClass('col-1')
+          .text(measurement.value)
+          .appendTo(measurementObject);
+
+        var actions = $("<div>")
+          .addClass('actions')
+          .addClass('col-1')
+          .appendTo(measurementObject);
+
+        var reject = $("<button>")
+          .text('REJECT')
+          .attr('type', 'button')
+          .addClass('btn')
+          .addClass('btn-danger')
+          .data('id', measurement.id)
+          .click(function() {
+            var id = $(this).data('id');
+            $.post('/api/measurements/' + id, {
+              verdict: 'reject'
+            })
+            replaceMeasurement(measurementObject);
+          })
+          .appendTo(actions);
+
+        var approve = $("<button>")
+          .text('APPROVE')
+          .attr('type', 'button')
+          .addClass('btn')
+          .addClass('btn-success')
+          .data('id', measurement.id)
+          .click(function() {
+            var id = $(this).data('id');
+            $.post('/api/measurements/' + id, {
+              verdict: 'approve'
+            })
+            replaceMeasurement(measurementObject);
+          })
+          .appendTo(actions);
+
+        var skip = $("<button>")
+          .text('SKIP')
+          .attr('type', 'button')
+          .addClass('btn')
+          .addClass('btn-warning')
+          .data('id', measurement.id)
+          .click(function() {
+            var id = $(this).data('id');
+            $.post('/api/measurements/' + id, {
+              verdict: 'skip'
+            })
+            replaceMeasurement(measurementObject);
+          })
+          .appendTo(actions);
+
+
+        var images = $("<div>")
+          .addClass('images')
+          .addClass('col-10')
+          .addClass('row')
+          .appendTo(measurementObject);
+
+        for(var x = 0; x<3; x++) {
+          var box = $("<div>")
+            .addClass("col")
+            .appendTo(images);
+          var image = $("<img>")
+            .attr('src','/static/' + JSON.parse(measurement.imagePaths)[x])
+            .appendTo(box);
+        }
+
+        return measurementObject;
+      }
+
+      function replaceMeasurement(oldDomObject) {
+        $.get('/api/measurements?noVerdict=1&count=6', function(data) {
+          for(var x=0; x<data.length; x++) {
+            var measurement = data[x];
+            if(!(measurement.id in activeMeasurements)) {
+              var newDomObject = generateMeasurementDomObject(measurement);
+              oldDomObject.replaceWith(newDomObject);
+              activeMeasurements[measurement.id] = measurement;
+              return;
+            }
+          }
+          oldDomObject.remove();
+        })
+      }
+
+      function addMeasurement(measurement) {
+        var measurementDomObject = generateMeasurementDomObject(measurement);
+        measurementDomObject.appendTo($("#container"));
+        activeMeasurements[measurement.id] = measurement;
+      }
+
+      $(function() {
+        $.get('/api/measurements?noVerdict=1&count=5', function(data) {
+          data.forEach(function(measurement) {
+            addMeasurement(measurement);
+          });
+          if(data.length == 0) {
+            alert("No new measurements");
+          }
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <div id="container" class="container-fluid">
+
+    </div>
+  </body>
+</html>
