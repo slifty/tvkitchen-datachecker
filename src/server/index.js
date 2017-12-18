@@ -241,17 +241,27 @@ function logFaceomaticMeasurement(archiveId, label, start, duration) {
 function loadResults() {
   console.log('Downloading latest results...')
   const storageFile = '/tmp/faceomaticResults.csv'
-  const archiveUrl = 'https://archive.org/download/faceomatic/results.csv'
   const file = fs.createWriteStream(storageFile)
-  const options = {
-    uri: archiveUrl,
-    method: 'GET',
-    headers: {
-      Cookie: `logged-in-user=${process.env.ARCHIVE_USER_ID};logged-in-sig=${process.env.ARCHIVE_SIG}`,
-    },
+  let stream = null
+
+  if (process.env.CSV_LOCATION === '') {
+    console.log('Loading from https://archive.org/download/faceomatic/results.csv')
+    const archiveUrl = 'https://archive.org/download/faceomatic/results.csv'
+    const options = {
+      uri: archiveUrl,
+      method: 'GET',
+      headers: {
+        Cookie: `logged-in-user=${process.env.ARCHIVE_USER_ID};logged-in-sig=${process.env.ARCHIVE_SIG}`,
+      },
+    }
+    stream = request(options)
+      .pipe(file)
+  } else {
+    console.log(`Loading from ${process.env.CSV_LOCATION}`)
+    stream = fs.createReadStream(process.env.CSV_LOCATION)
+      .pipe(file)
   }
 
-  const stream = request(options).pipe(file)
   stream.on('finish', () => {
     // Open the file...
     fs.readFile(storageFile, (readErr, fileData) => {
@@ -272,4 +282,6 @@ function loadResults() {
 }
 
 // Set up hourly scheduled download of CSV and import of latest rows
-schedule.scheduleJob('0 * * * *', loadResults)
+schedule.scheduleJob('30 * * * *', loadResults)
+
+loadResults()
