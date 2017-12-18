@@ -266,8 +266,8 @@ function loadResults() {
     // Open the file...
     fs.readFile(storageFile, (readErr, fileData) => {
       csv.parse(fileData, {}, (parseErr, rows) => {
-        // We are only going to load the most recent 10 rows
-        const truncatedRows = rows.slice(rows.length - 100)
+        // We are only going to load the most recent 4000 rows
+        const truncatedRows = rows.slice(rows.length - 4000)
         truncatedRows.forEach((row) => {
           const archiveId = row[7]
           const label = row[0]
