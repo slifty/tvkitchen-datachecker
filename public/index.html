@@ -91,12 +91,13 @@
           .addClass('row')
           .appendTo(measurementObject);
 
-        for(var x = 0; x<3; x++) {
+        var imagePaths = JSON.parse(measurement.imagePaths)
+        for(var x = 0; x<imagePaths.length; x++) {
           var box = $("<div>")
             .addClass("col")
             .appendTo(images);
           var image = $("<img>")
-            .attr('src','/static/' + JSON.parse(measurement.imagePaths)[x])
+            .attr('src','/static/' + imagePaths[x])
             .appendTo(box);
         }
 
