@@ -212,13 +212,15 @@ function logFaceomaticMeasurement(archiveId, label, start, duration) {
       return
     }
 
-    const paddedStart = Math.max(0, start - 4)
-    const paddedDuration = duration + Math.min(4, start) + 4
+    const paddedStart = Math.max(0, start - 6)
+    const paddedDuration = duration + Math.min(6, start) + 6
     downloadClip(archiveId, paddedStart, paddedStart + paddedDuration, (videoFile) => {
       const images = []
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 2).split('/').slice(-2).join('/'))
       images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 1).split('/').slice(-2).join('/'))
       images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2)).split('/').slice(-2).join('/'))
       images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 1).split('/').slice(-2).join('/'))
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 2).split('/').slice(-2).join('/'))
       Measurement
         .build({
           type: 'faceomatic',
