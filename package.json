@@ -13,7 +13,8 @@
     "prod:stop": "pm2 delete server",
     "test": "eslint src",
     "precommit": "yarn test",
-    "prepush": "yarn test && yarn prod:build"
+    "prepush": "yarn test && yarn prod:build",
+    "migrate": "source .env && node_modules/.bin/sequelize --url $DATABASE_URL db:migrate"
   },
   "browserslist": [
     "> 1%"

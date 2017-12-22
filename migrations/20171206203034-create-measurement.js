@@ -31,6 +31,9 @@ module.exports = {
       imagePaths: {
         type: Sequelize.TEXT,
       },
+      extraFields: {
+        type: Sequelize.TEXT,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
