@@ -101,6 +101,12 @@ app.get('/api/measurements', (req, res) => {
     where.verdict = null
   }
 
+  if (req.query.label) {
+    where.value = {
+      like: req.query.label,
+    }
+  }
+
   if (where !== {}) {
     settings.where = where
   }

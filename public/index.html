@@ -17,10 +17,15 @@
         font-size: 16px;
 
       }
+      .measurement {
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
     </style>
 
     <script type="text/javascript">
       var activeMeasurements = {};
+      var labelFilter = '';
 
       function generateMeasurementDomObject(measurement) {
         var measurementObject = $('<div>')
@@ -105,7 +110,9 @@
       }
 
       function replaceMeasurement(oldDomObject) {
-        $.get('/api/measurements?noVerdict=1&count=6', function(data) {
+        var url = '/api/measurements?noVerdict=1&count=6';
+        url = addFilter(url);
+        $.get(url, function(data) {
           for(var x=0; x<data.length; x++) {
             var measurement = data[x];
             if(!(measurement.id in activeMeasurements)) {
@@ -125,8 +132,23 @@
         activeMeasurements[measurement.id] = measurement;
       }
 
-      $(function() {
-        $.get('/api/measurements?noVerdict=1&count=5', function(data) {
+      function setFilter(newFilter) {
+        labelFilter = newFilter;
+        refreshMeasurements(5);
+      }
+
+      function addFilter(url) {
+        if(labelFilter != '') {
+          return url = url + "&label=" + labelFilter;
+        }
+        return url;
+      }
+
+      function refreshMeasurements(count) {
+        $("#container").empty();
+        var url = '/api/measurements?noVerdict=1&count=' + count;
+        url = addFilter(url);
+        $.get(url, function(data) {
           data.forEach(function(measurement) {
             addMeasurement(measurement);
           });
@@ -134,11 +156,40 @@
             alert("No new measurements");
           }
         })
+      }
+
+      $(function() {
+        refreshMeasurements(5);
+        $("#setFilterText").click(function() {
+          var filter = $("#filterText").val();
+          alert(filter)
+          setFilter(filter);
+          refreshMeasurements(5);
+        })
       });
     </script>
   </head>
   <body>
-    <div id="container" class="container-fluid">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col-1-sm">
+              <label for="filterText">Label:</label>
+            </div>
+            <div class="col-2-lg col-4-sm">
+              <input id="filterText" type="text" />
+            </div>
+            <div class="col-1-xs">
+              <input id="setFilterText" type="button" value="Set Filter" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" id="container">
+        </div>
+      </div>
 
     </div>
   </body>
