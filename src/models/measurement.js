@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       duration: DataTypes.INTEGER,
       verdict: DataTypes.STRING,
       imagePaths: DataTypes.TEXT,
+      extraFields: DataTypes.TEXT,
     },
     {
       classMethods: {},

@@ -28,6 +28,8 @@
       var labelFilter = '';
 
       function generateMeasurementDomObject(measurement) {
+        var extraFields = JSON.parse(measurement.extraFields);
+
         var measurementObject = $('<div>')
           .addClass('measurement')
           .addClass('row')
@@ -36,8 +38,12 @@
         var label = $("<div>")
           .addClass('label')
           .addClass('col-1')
-          .text(measurement.value)
+          .html(measurement.value)
           .appendTo(measurementObject);
+
+        if(archiveUrl in extraFields) {
+          label.html("<a href='" + extraFields.archiveUrl + "'>" + measurement.value + "</a>");
+        }
 
         var actions = $("<div>")
           .addClass('actions')
