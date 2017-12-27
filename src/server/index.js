@@ -225,11 +225,18 @@ function logFaceomaticMeasurement(archiveId, label, start, duration) {
     }
     downloadClip(archiveId, paddedStart, paddedStart + paddedDuration, (videoFile) => {
       const images = []
-      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 2).split('/').slice(-2).join('/'))
-      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 1).split('/').slice(-2).join('/'))
-      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2)).split('/').slice(-2).join('/'))
-      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 1).split('/').slice(-2).join('/'))
-      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 2).split('/').slice(-2).join('/'))
+      let finishedCount = 0
+      const finishedOne = () => {
+        finishedCount += 1
+        if (finishedCount === 5) {
+          fs.unlink(videoFile)
+        }
+      }
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 2, finishedOne).split('/').slice(-2).join('/'))
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 1, finishedOne).split('/').slice(-2).join('/'))
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2), finishedOne).split('/').slice(-2).join('/'))
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 1, finishedOne).split('/').slice(-2).join('/'))
+      images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) + 2, finishedOne).split('/').slice(-2).join('/'))
       Measurement
         .build({
           type: 'faceomatic',
