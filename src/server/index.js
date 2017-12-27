@@ -221,7 +221,7 @@ function logFaceomaticMeasurement(archiveId, label, start, duration) {
     const paddedStart = Math.max(0, start - 6)
     const paddedDuration = duration + Math.min(6, start) + 6
     const extraFields = {
-      archiveUrl: `https://archive.org/details/${archiveId}/start/${paddedStart}/end/${start + paddedDuration}`,
+      archiveUrl: `https://archive.org/details/${archiveId}/start/${paddedStart}/end/${parseInt(start, 10) + parseInt(paddedDuration, 10)}`,
     }
     downloadClip(archiveId, paddedStart, paddedStart + paddedDuration, (videoFile) => {
       const images = []
@@ -229,7 +229,7 @@ function logFaceomaticMeasurement(archiveId, label, start, duration) {
       const finishedOne = () => {
         finishedCount += 1
         if (finishedCount === 5) {
-          fs.unlink(videoFile)
+          fs.unlinkSync(videoFile)
         }
       }
       images.push(extractFrame(`${archiveId}_${paddedStart}`, videoFile, Math.floor(paddedDuration / 2) - 2, finishedOne).split('/').slice(-2).join('/'))
