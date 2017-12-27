@@ -41,7 +41,7 @@
           .html(measurement.value)
           .appendTo(measurementObject);
 
-        if(archiveUrl in extraFields) {
+        if("archiveUrl" in extraFields) {
           label.html("<a href='" + extraFields.archiveUrl + "'>" + measurement.value + "</a>");
         }
 
